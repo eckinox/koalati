@@ -46,6 +46,8 @@ services:
       interval: 3s
       timeout: 3s
       retries: 10
+    ports:
+      - 3306:3306
 
   tools-service:
     image: koalati/tools-service
