@@ -5,47 +5,47 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 
 imports:
-    - { resource: 'sessions.yaml' }
+    - { resource: "sessions.yaml" }
 
 parameters:
-    test_stub_dir: '%kernel.project_dir%/tests/stub'
-    paddle_public_key: '%env(PADDLE_PUBLIC_KEY)%'
-    self_hosting_mode: '%env(bool:SELF_HOSTING)%'
-    invite_only_registration_mode: '%env(bool:INVITE_ONLY_REGISTRATION_MODE)%'
+    test_stub_dir: "%kernel.project_dir%/tests/stub"
+    paddle_public_key: "%env(PADDLE_PUBLIC_KEY)%"
+    self_hosting_mode: "%env(bool:SELF_HOSTING)%"
+    invite_only_registration_mode: "%env(bool:INVITE_ONLY_REGISTRATION_MODE)%"
 
 services:
     # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
+        autowire: true # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     _instanceof:
         App\Subscription\Plan\PlanInterface:
-            tags: ['app.subscription_plan']
+            tags: ["app.subscription_plan"]
         App\Mercure\EntityHandlerInterface:
-            tags: ['app.mercure_entity_handler']
+            tags: ["app.mercure_entity_handler"]
         App\Serializer\EntityExtension\EntityExtensionInterface:
-            tags: ['app.serializer.entity_extension']
+            tags: ["app.serializer.entity_extension"]
         App\Util\Search\SearchInterface:
-            tags: ['app.search']
+            tags: ["app.search"]
         App\Activity\EntityActivityLoggerInterface:
-            tags: ['app.entity_activity_logger']
+            tags: ["app.entity_activity_logger"]
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
-        resource: '../src/'
+        resource: "../src/"
         exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
-            - '../src/Tests/'
+            - "../src/DependencyInjection/"
+            - "../src/Entity/"
+            - "../src/Kernel.php"
+            - "../src/Tests/"
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
-        resource: '../src/Controller/'
-        tags: ['controller.service_arguments']
+        resource: "../src/Controller/"
+        tags: ["controller.service_arguments"]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -55,62 +55,62 @@ services:
         class: League\Flysystem\AwsS3V3\AwsS3V3Adapter
         arguments:
             - '@Aws\S3\S3ClientInterface'
-            - '%env(STORAGE_BUCKET)%'
+            - "%env(STORAGE_BUCKET)%"
 
     # Local filesystem adapter for self-hosting
     League\Flysystem\Local\LocalFilesystemAdapter:
         arguments:
-            - '%kernel.project_dir%/public/storage/'
+            - "%kernel.project_dir%/public/storage/"
 
     Aws\S3\S3ClientInterface:
         class: Aws\S3\S3Client
         arguments:
             $args:
                 credentials:
-                    key: '%env(STORAGE_AUTH_KEY)%'
-                    secret: '%env(STORAGE_AUTH_SECRET)%'
-                region: '%env(STORAGE_REGION)%'
-                version: '%env(STORAGE_VERSION)%'
-                endpoint: '%env(STORAGE_ENDPOINT)%'
+                    key: "%env(STORAGE_AUTH_KEY)%"
+                    secret: "%env(STORAGE_AUTH_SECRET)%"
+                region: "%env(STORAGE_REGION)%"
+                version: "%env(STORAGE_VERSION)%"
+                endpoint: "%env(STORAGE_ENDPOINT)%"
 
     App\Storage\AbstractStorage:
         arguments:
-            - '%env(STORAGE_CDN_URL)%'
+            - "%env(STORAGE_CDN_URL)%"
             - '@Symfony\Component\Asset\Packages'
             - '@App\Storage\FilesystemManager'
 
     App\Storage\ProjectStorage:
-        parent:  App\Storage\AbstractStorage
+        parent: App\Storage\AbstractStorage
 
     App\Storage\UserUploadStorage:
-        parent:  App\Storage\AbstractStorage
+        parent: App\Storage\AbstractStorage
 
     App\ToolsService\ClientInterface:
         class: 'App\ToolsService\Client'
         arguments:
-            - '%env(TOOLS_API_WORKER_URL)%'
-            - '%env(TOOLS_API_WORKER_BEARER_TOKEN)%'
+            - "%env(TOOLS_API_WORKER_URL)%"
+            - "%env(TOOLS_API_WORKER_BEARER_TOKEN)%"
 
     App\ToolsService\ServerlessClient:
         arguments:
-            - '%env(TOOLS_API_FUNCTIONS_URL)%'
-            - '%env(TOOLS_API_FUNCTIONS_BEARER_TOKEN)%'
+            - "%env(TOOLS_API_FUNCTIONS_URL)%"
+            - "%env(TOOLS_API_FUNCTIONS_BEARER_TOKEN)%"
 
     App\Util\Screenshot\Driver\ScreenshotDriverInterface:
         alias: App\Util\Screenshot\Driver\ApiFlash
 
     App\Util\Screenshot\Driver\ApiFlash:
         arguments:
-            - '%env(APIFLASH_ACCESS_KEY)%'
+            - "%env(APIFLASH_ACCESS_KEY)%"
 
     App\Util\Meta\Driver\UrlMeta:
         arguments:
-            - '%env(URLMETA_ACCOUNT_EMAIL)%'
-            - '%env(URLMETA_API_KEY)%'
+            - "%env(URLMETA_ACCOUNT_EMAIL)%"
+            - "%env(URLMETA_API_KEY)%"
 
     App\Util\Meta\Driver\OpenGraphIo:
         arguments:
-            - '%env(OPENGRAPHIO_API_KEY)%'
+            - "%env(OPENGRAPHIO_API_KEY)%"
 
     App\Util\Meta\MetaDriverInterface:
         alias: App\Util\Meta\Driver\BasicHttp
@@ -118,14 +118,9 @@ services:
     App\Util\Favicon\FaviconFetcherInterface:
         alias: App\Util\Favicon\FaviconFetcher
 
-    App\Util\Favicon\Driver\FaviconKit:
-        arguments:
-            - '@App\Util\Url'
-            - '%env(FAVICONKIT_API_HOSTNAME)%'
-
     App\Util\Favicon\FaviconFetcher:
         arguments:
-            - ['@App\Util\Favicon\Driver\FaviconKit', '@App\Util\Favicon\Driver\GoogleFavicon']
+            - ['@App\Util\Favicon\Driver\GoogleFavicon']
 
     App\Util\Analytics\AnalyticsInterface:
         alias: App\Util\Analytics\Driver\Plausible
@@ -133,8 +128,8 @@ services:
     Paddle\API:
         class: 'Paddle\API'
         arguments:
-            - '%env(PADDLE_VENDOR_ID)%'
-            - '%env(PADDLE_AUTH_CODE)%'
+            - "%env(PADDLE_VENDOR_ID)%"
+            - "%env(PADDLE_AUTH_CODE)%"
 
     App\Subscription\PlanManager:
         arguments:
@@ -153,29 +148,36 @@ services:
             - !tagged_iterator app.entity_activity_logger
 
     # API
-    ApiPlatform\State\ProcessorInterface $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
-    ApiPlatform\State\ProcessorInterface $removeProcessor: '@api_platform.doctrine.orm.state.remove_processor'
+    ApiPlatform\State\ProcessorInterface $persistProcessor: "@api_platform.doctrine.orm.state.persist_processor"
+    ApiPlatform\State\ProcessorInterface $removeProcessor: "@api_platform.doctrine.orm.state.remove_processor"
     App\Api\OpenApi\OpenApiFactoryDecorator:
-        decorates: 'api_platform.openapi.factory'
-        arguments: ['@.inner']
+        decorates: "api_platform.openapi.factory"
+        arguments: ["@.inner"]
     App\Api\Routing\EncryptedIriConverter:
-        decorates: 'api_platform.iri_converter'
-        arguments: ['@.inner']
+        decorates: "api_platform.iri_converter"
+        arguments: ["@.inner"]
     App\Api\State\EncryptedIdsCallableProvider:
-        decorates: 'api_platform.state_provider.locator'
-        arguments: ['@.inner']
+        decorates: "api_platform.state_provider.locator"
+        arguments: ["@.inner"]
     App\Api\Security\AuthenticationJwtListener:
         tags:
-            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJwtCreated }
-            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_decoded, method: onJwtDecoded }
+            - {
+                  name: kernel.event_listener,
+                  event: lexik_jwt_authentication.on_jwt_created,
+                  method: onJwtCreated,
+              }
+            - {
+                  name: kernel.event_listener,
+                  event: lexik_jwt_authentication.on_jwt_decoded,
+                  method: onJwtDecoded,
+              }
 
     ############################
     # Doctrine event listeners #
     ############################
     App\EventListener\OrganizationMemberDeletionListener:
         tags:
-            -
-                name: 'doctrine.orm.entity_listener'
-                event: 'preRemove'
-                entity: 'App\Entity\OrganizationMember'
-                lazy: true
+            - name: "doctrine.orm.entity_listener"
+              event: "preRemove"
+              entity: 'App\Entity\OrganizationMember'
+              lazy: true
