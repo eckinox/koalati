@@ -134,8 +134,8 @@ CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
 FROM caddy:${CADDY_VERSION}-builder-alpine AS symfony_caddy_builder
 
 RUN xcaddy build \
-	--with github.com/dunglas/mercure/caddy \
-	--with github.com/dunglas/vulcain/caddy
+	--with github.com/dunglas/mercure/caddy@v0.16.3 \
+	--with github.com/dunglas/vulcain/caddy@v1.1.1
 
 FROM caddy:${CADDY_VERSION} AS symfony_caddy
 
