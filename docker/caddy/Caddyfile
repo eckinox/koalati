@@ -8,6 +8,10 @@
 log
 
 route {
+    # Trust proxy headers from DigitalOcean load balancer
+    @proxy header X-Forwarded-Proto *
+    header @proxy X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}
+    
     header X-Frame-Options "SAMEORIGIN"
     root * /srv/app/public
     mercure {
