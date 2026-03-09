@@ -26,6 +26,8 @@ html_sanitizer:
                         - 'class'
                 img:
                     allowed_attributes:
+                        - 'src'
+                        - 'alt'
                         - 'width'
                         - 'height'
 
