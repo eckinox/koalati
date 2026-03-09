@@ -23,7 +23,7 @@ class TinyMceUploadController extends AbstractController
 	#[Route(path: '/internal-api/tinymce-upload/image', name: 'api_tinymce_upload_image', options: ['expose' => true])]
 	public function upload(Request $request, UserUploadStorage $userUploadStorage): Response
 	{
-		$allowedOrigins = ["https://localhost", "https://app.koalati.com"];
+		$allowedOrigins = ["https://localhost", "https://app.koalati.com", "https://koalati.eckidev.com"];
 		$origin = $request->server->get('HTTP_ORIGIN');
 
 		// same-origin requests won't set an origin. If the origin is set, it must be valid.
