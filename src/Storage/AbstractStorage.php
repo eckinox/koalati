@@ -34,6 +34,11 @@ abstract class AbstractStorage
 		}
 
 		if ($this->filesystemManager->isLocalFilesystem()) {
+			$baseUrl = $_ENV['BASE_URL'] ?? '';
+			if ($baseUrl !== '') {
+				return rtrim($baseUrl, '/').'/storage/'.ltrim($path, '/');
+			}
+
 			return $this->packages->getUrl("storage/".ltrim($path, '/'));
 		}
 

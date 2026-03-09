@@ -3,6 +3,8 @@ import "@tinymce/tinymce-webcomponent";
 
 window.tinymce_config = {
 	automatic_uploads: true,
+	relative_urls: false,
+	remove_script_host: false,
 };
 
 window.tinymce_init_callback = (e) => {
@@ -12,6 +14,7 @@ window.tinymce_init_callback = (e) => {
 export default function getTinyMceEditor(editorId, content = "") {
 	return html`
 		<tinymce-editor
+			config="tinymce_config"
 			src="/ext/tinymce/tinymce.min.js"
 			skin="oxide-koalati"
 			content_css="default-koalati"
